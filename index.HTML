@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Dezenas</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9; }
+    h2 { text-align: center; }
+    .input-field { margin-bottom: 10px; }
+    .number-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px; margin: 20px 0; }
+    .number { padding: 10px; background-color: #eee; text-align: center; cursor: pointer; border-radius: 5px; user-select: none; }
+    .number.selected { background-color: #4caf50; color: white; }
+    button { padding: 10px 20px; background-color: #2196f3; color: white; border: none; cursor: pointer; border-radius: 5px; display: block; margin: 20px auto 0; }
+    button:disabled { background-color: #ccc; }
+  </style>
+</head>
+<body>
+  <h2>Formulário de Participação</h2>
+  <div class="input-field">
+    <label>Nome Completo:</label><br>
+    <input type="text" id="nome" style="width: 100%">
+  </div>
+  <div class="input-field">
+    <label>Telefone com DDD:</label><br>
+    <input type="text" id="telefone" style="width: 100%">
+  </div>
+  <div class="input-field">
+    <label>Nome do Vendedor:</label><br>
+    <input type="text" id="vendedor" style="width: 100%">
+  </div>
+
+  <p><strong>Selecione 20 dezenas:</strong></p>
+  <div class="number-grid" id="grid"></div>
+
+  <button id="enviar" disabled>Enviar via WhatsApp</button>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const enviarBtn = document.getElementById('enviar');
+
+    for (let i = 1; i <= 60; i++) {
+      const div = document.createElement('div');
+      div.classList.add('number');
+      div.textContent = i.toString().padStart(2, '0');
+      div.onclick = () => toggleNumber(div);
+      grid.appendChild(div);
+    }
+
+    function toggleNumber(div) {
+      div.classList.toggle('selected');
+      const selected = document.querySelectorAll('.number.selected');
+      enviarBtn.disabled = selected.length !== 20;
+    }
+
+    enviarBtn.onclick = () => {
+      const nome = document.getElementById('nome').value;
+      const telefone = document.getElementById('telefone').value;
+      const vendedor = document.getElementById('vendedor').value;
+      const dezenas = Array.from(document.querySelectorAll('.number.selected')).map(n => n.textContent);
+
+      if (!nome || !telefone || !vendedor) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+      }
+
+      const msg = `Nome: ${nome}
+Telefone: ${telefone}
+Vendedor: ${vendedor}
+Dezenas escolhidas: ${dezenas.join(', ')}`;
+
+      const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    };
+  </script>
+</body>
+</html>
+
+
